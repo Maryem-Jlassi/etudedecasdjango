@@ -23,7 +23,8 @@ class Conference(models.Model):
 
     class Meta:
         verbose_name_plural="Conferences"
-        constraints=[models.CheckConstraint(check=models.Q(start_date__gte=timezone.now().date()),name="the start date must be greater than today or equal")]
+        constraints=[models.CheckConstraint(check=models.Q(start_date__gte=timezone.now().date()),
+                                            name="start_date_must_be_today_or_future")]
         
     def __str__(self):
-        return f"title conference {self.title}"
+        return f"title conference: {self.title} location :{self.location}"

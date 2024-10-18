@@ -4,6 +4,7 @@ from django.db.models.query import QuerySet
 from .models import Conference
 from users.models import *
 from django.db.models import Count
+from django.utils import timezone
 # Register your models here.
 class ReservationInline(admin.StackedInline):
     model=Reservation
