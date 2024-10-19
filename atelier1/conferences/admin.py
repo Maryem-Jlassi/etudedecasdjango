@@ -38,6 +38,7 @@ class ParticipantFilter(admin.SimpleListFilter):
             ('0',('No participants')),
             ('more',('more participants')),
         )
+    
     def queryset (self, request, queryset):
         if self.value()=='0':
             return queryset.annotate(participant_count=Count('reservations')).filter(participant_count=0)
@@ -45,21 +46,29 @@ class ParticipantFilter(admin.SimpleListFilter):
             return queryset.annotate(participant_count=Count('reservations')).filter(participant_count__gt=0)
 
         return queryset
-        
+    
+    def queryset(self, request, queryset):
+        if self.value() == '0':
+            # Filtrer les objets sans réservations
+            return queryset.filter(reservations__isnull=True)
+        elif self.value() == 'more':
+            # Filtrer les objets avec au moins une réservation
+            return queryset.filter(reservations__isnull=False).distinct()
+    
 
 
-class Conferenceadmin(admin.ModelAdmin):
+class ConferenceAdmin(admin.ModelAdmin):
     list_display=('title','location','start_date','end_date','price')
     search_fields=('title',)
-    list_per_page=2
-    ordering=('start_date','title')
+    list_per_page=2     #pagination
+    ordering=('start_date','title') #ordre inverse ('_start_date')
     fieldsets=(
-        ('Description',{'fields':('title','description','Category','location')}),
-        ('horaires',{'fields':('start_date','end_date','created_at','updated_at')}),
+        ('Description',{'fields':('title','description','Category','location','price','capacity')}),
+        ('Horaires',{'fields':('start_date','end_date','created_at','update_at')}),
         ('documents',{'fields':('program',)})
     )
-    readonly_fields=('created_at','updated_at')
+    readonly_fields=('created_at','update_at')
     inlines=[ReservationInline]
     autocomplete_fields=('Category',)
     list_filter=('title',ParticipantFilter,ConferenceDateFilter)
-admin.site.register(Conference,Conferenceadmin)
+admin.site.register(Conference,ConferenceAdmin)

@@ -12,9 +12,9 @@ class Conference(models.Model):
     location=models.CharField(max_length=255)
     price=models.FloatField()
     capacity=models.IntegerField(validators=[MaxValueValidator(limit_value=900,message='capacity must be under 900')])
-    program=models.FileField(upload_to='files/',validators=[FileExtensionValidator(allowed_extensions=['pdf','png','jpeg','jpg'],message='only pdf,png,jpg,jpeg are allowed')])
-    created_at=models.DateField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now=True)
+    program=models.FileField(upload_to='files/',validators=[FileExtensionValidator(allowed_extensions=['pdf','png','jpeg','jpg'],message="only pdf,png,jpg,jpeg are allowed")])
+    created_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
     Category=models.ForeignKey(Category,on_delete=models.CASCADE,related_name='conferences')
 
     def clean(self):
@@ -24,7 +24,7 @@ class Conference(models.Model):
     class Meta:
         verbose_name_plural="Conferences"
         constraints=[models.CheckConstraint(check=models.Q(start_date__gte=timezone.now().date()),
-                                            name="start_date_must_be_today_or_future")]
+                                            name="the start date must be greater than today or equal")]
         
     def __str__(self):
-        return f"title conference: {self.title} location :{self.location}"
+        return f"title conference: {self.title} "
